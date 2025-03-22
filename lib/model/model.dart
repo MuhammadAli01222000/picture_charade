@@ -116,14 +116,13 @@ class PictureCharade {
       'coin': this.coin,
     };
   }
-
   factory PictureCharade.fromMap(Map<String, dynamic> map) {
     return PictureCharade(
-      left: map['left'] as ImageCard,
-      right: map['right'] as ImageCard,
+      left: ImageCard.fromMap(map['left'] as Map<String, dynamic>),
+      right: ImageCard.fromMap(map['right'] as Map<String, dynamic>),
       description: map['description'] as String,
       word: map['word'] as String,
-      letters: map['letters'] as List<String>,
+      letters: List<String>.from(map['letters'] as List<dynamic>),
       imageUrl: map['imageUrl'] as String,
       leftLetter: map['leftLetter'] as int,
       rightLetter: map['rightLetter'] as int,
@@ -132,7 +131,10 @@ class PictureCharade {
       coin: map['coin'] as int,
     );
   }
+
 }
+
+
 
 class ImageCard {
   final String imageUrl;
@@ -203,15 +205,14 @@ class ImageCard {
       'fill': this.fill,
       'name': this.name,
     };
-  }
-
-  factory ImageCard.fromMap(Map<String, dynamic> map) {
+  }factory ImageCard.fromMap(Map<String, dynamic> map) {
     return ImageCard(
       imageUrl: map['imageUrl'] as String,
-      color: map['color'] as int,
+      color: int.parse("0xFF" + (map['color'] as String)), // ✅ HEX to int
       length: map['length'] as int,
       fill: map['fill'] as int,
       name: map['name'] as String,
     );
   }
+
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+
+import '../../model/model.dart';
+const backround='assets/images/images_card/backround.png';
 
 class CardContainer extends StatefulWidget {
+  final PictureCharade pictureCharade;
   final String imgUrl;
-  const CardContainer({super.key, required this.imgUrl});
+  const CardContainer({super.key, required this.imgUrl, required this.pictureCharade});
 
   @override
   State<CardContainer> createState() => _CardContainerState();
@@ -12,100 +15,56 @@ class CardContainer extends StatefulWidget {
 class _CardContainerState extends State<CardContainer> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: 200,
-          height: 250,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(color: Colors.blueGrey, offset: Offset(-1.5, 5)),
-              BoxShadow(color: Colors.blueGrey, offset: Offset(4, -1.5)),
-            ],
-            color: Colors.white,
+    return Container(
+      width: 251,
+      height: 251,
+      child: Row(
+       // mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+              width: 250,
+              height: 250,
+              child: Image.asset(widget.pictureCharade.left.imageUrl,fit: BoxFit.scaleDown,)),
+          SizedBox(width: 5,),
+          SizedBox(
+              width: 250,
+              height: 250,
+              child: Image.asset(widget.pictureCharade.right.imageUrl,fit: BoxFit.contain,))
 
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
+        ],
+      ),
+    );
+  }
+}
 
-        Positioned(
-          bottom: 60,
-          left: 23,
-          child: Image.asset(
-            widget.imgUrl,
-            fit: BoxFit.contain,
-            width: 150,
-            height: 150,
-          ),
-        ),
-        Positioned(
-          bottom: 2,
-          child: SizedBox(
-            width: 200,
-            height: 50,
-            child: Card(
-              color: Colors.blue[900],
-              child: Center(
-                child: SizedBox(
-                  width: 100,
-                  height: 25,
-                  child: Card(color: Colors.red),
-                ),
-              ),
+class SmalContainerWork extends StatelessWidget {
+  final ImageCard imageCard;
+  final Color colorBackround;
+
+  const SmalContainerWork({
+    super.key,
+    required this.colorBackround,
+    required this.imageCard,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Center(
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.red,
             ),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class LetterTilesWidget extends StatelessWidget {
-  const LetterTilesWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> letters = ["E", "A", "O", "T", "P", "R"];
-    return Row(
-      children:
-          letters.map((letter) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.blueGrey,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Text(
-                letter,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            );
-          }).toList(),
-    );
-  }
-}
-
-class BlueButtonWidget extends StatelessWidget {
-  const BlueButtonWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Text(
-          "Click Me",
-          style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
     );
