@@ -32,6 +32,7 @@ flutter:
     - assets/images/images_card/
     - assets/json/game_json.json
     - assets/sound/win.wav
+    - assets/sound/game_sound.mp3
 
   # fonts:
   #   - family: Schyler

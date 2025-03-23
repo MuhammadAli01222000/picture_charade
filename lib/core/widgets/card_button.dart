@@ -15,22 +15,18 @@ class CardContainer extends StatefulWidget {
 class _CardContainerState extends State<CardContainer> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 251,
-      height: 251,
+    return SizedBox(
+      width: 151,
+      height:151,
       child: Row(
        // mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-              width: 250,
-              height: 250,
+              width: 150,
+              height: 150,
               child: Image.asset(widget.pictureCharade.left.imageUrl,fit: BoxFit.scaleDown,)),
           SizedBox(width: 5,),
-          SizedBox(
-              width: 250,
-              height: 250,
-              child: Image.asset(widget.pictureCharade.right.imageUrl,fit: BoxFit.contain,))
 
         ],
       ),
@@ -39,34 +35,15 @@ class _CardContainerState extends State<CardContainer> {
 }
 
 class SmalContainerWork extends StatelessWidget {
-  final ImageCard imageCard;
-  final Color colorBackround;
-
+final  Color color;
   const SmalContainerWork({
-    super.key,
-    required this.colorBackround,
-    required this.imageCard,
+    super.key, required this.color
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Center(
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.red,
-            ),
-          ),
-        ),
-      ),
+    return SizedBox(
+      width: 10,height: 10,child: Card(color: color,),
     );
   }
 }

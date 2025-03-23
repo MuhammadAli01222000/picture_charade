@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:picture_charades_guess_words/core/theme/colors.dart';
 import 'package:picture_charades_guess_words/core/theme/icons.dart';
-import 'package:picture_charades_guess_words/core/theme/strings.dart';
 import 'package:picture_charades_guess_words/core/widgets/card_button.dart';
 import 'package:picture_charades_guess_words/core/widgets/icon_button.dart';
 import 'package:picture_charades_guess_words/services/data_controler.dart';
 
-import '../core/widgets/drag_target.dart';
 import '../core/widgets/text_widget.dart';
 import '../model/model.dart';
+import '../tests.dart';
 
 const coin = "assets/images/coin.png";
-const brain = 'assets/images/brain.png';
+
+///sound
+const gameSound = 'assets/sound/game_sound.mp3';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,19 +32,37 @@ class _HomePageState extends State<HomePage> {
     _playSoundWrong(_audioPlayer);
   }
 
-  Future<void> _playSoundWrong(AudioPlayer _audioPlayer) async {
+  Future<void> _playSoundWrong(AudioPlayer audioPlayer) async {
     try {
-      await _audioPlayer.setAsset("assets/sound/win.wav");
-      await _audioPlayer.play();
+      await audioPlayer.setAsset("assets/sound/win.wav");
+      await audioPlayer.play();
     } catch (e) {
       debugPrint("Error loading audio: $e");
     }
+  }
+
+  void gamePlay() {
+    _soundGame(_audioPlayer);
+  }
+
+  Future<void> _soundGame(AudioPlayer audioPlayer) async {
+    try {
+      await audioPlayer.setAsset(gameSound);
+      await audioPlayer.play();
+    } catch (e) {
+      debugPrint("Error loading audio: $e");
+    }
+  }
+
+  void pause() {
+    _audioPlayer.pause();
   }
 
   @override
   void initState() {
     super.initState();
     _audioPlayer.play();
+    gamePlay();
   }
 
   @override
@@ -51,6 +70,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
     _audioPlayer.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     correct ? coinCount += 100 : coinCount;
@@ -75,40 +95,43 @@ class _HomePageState extends State<HomePage> {
 
             return Column(
               children: [
-                _light_button(), //  Joyida turishi kerak bo'lgan button
-                SizedBox(height: 30),
-
+                _light_button(),
+                SizedBox(height: 10),
+                soundOf(),
+                SizedBox(height: 20),
 
                 SizedBox(
-                  height:150,
+                  height: 280,
+                  width: 260,
                   child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: 1,
-                      itemBuilder: (context, index) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-
-                              child: CardContainer(
-                                imgUrl: dataController.list[index].left.imageUrl,
-                                pictureCharade: dataController.list[index],
-                              ),
-                              height: 100,
-                            ),
-                            SizedBox(width: 10),
-
-                          ],
-                        );
-                      },
-                    ),
+                    scrollDirection: Axis.vertical,
+                    itemCount: 1,
+                    itemBuilder: (context, index) {
+                      return Expanded(
+                        child: MyImg(
+                          leftImg: dataController.list[index].left.imageUrl,
+                          rightImg: dataController.list[index].right.imageUrl,
+                          countWords: dataController.list[index].right.length,
+                          countWordsLeft:
+                              dataController.list[index].left.length,
+                        ),
+                      );
+                    },
+                  ),
                 ),
 
-
-                /// 🔹 Quyidagi widgetlar joyida turadi
                 SizedBox(height: 20),
-                WordsLength(pictureCharade: dataController.list.first),
-                DragTargetBox(pictureCharade: dataController.list.first),
+                Draggable(
+                  feedback: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Text("!!!!!!!11"),
+                  ),
+                  child: WordsLength(
+                    pictureCharade: dataController.list.first,
+                    dataController: dataController,
+                  ),
+                ),
               ],
             );
           },
@@ -117,30 +140,20 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildContent() {
-    final dataController = DataController();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SizedBox(
-          width: 250,
-          height: 250,
-          child: CardContainer(
-            imgUrl: dataController.list.first.left.imageUrl,
-            pictureCharade: dataController.list.first,
-          ),
+  //icon button sound of
+  Align soundOf() {
+    return Align(
+      alignment: Alignment(0.8, 0.8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.redAccent,
+          shape: BoxShape.circle,
         ),
-        SizedBox(height: 10),
-        SizedBox(
-          width: 250,
-          height: 250,
-          child: CardContainer(
-            imgUrl: dataController.list.first.right.imageUrl,
-            pictureCharade: dataController.list.first,
-          ),
+        child: IconButton(
+          onPressed: () => pause(),
+          icon: Icon(Icons.volume_off, color: Colors.yellowAccent),
         ),
-      ],
+      ),
     );
   }
 
@@ -172,6 +185,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  ///appbar
   AppBar _buildAppBar({required int coins, required int level}) {
     return AppBar(
       backgroundColor: Colors.white70,
@@ -183,7 +197,7 @@ class _HomePageState extends State<HomePage> {
               shape: BoxShape.circle,
               color: Colors.transparent,
             ),
-            child: TextWidgetLevel(level: level,),
+            child: TextWidgetLevel(level: level),
           ),
           SizedBox(width: 10),
           Expanded(
@@ -192,7 +206,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 120,
                     height: 45,
                     child: Card(
@@ -207,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                             child: Image.asset(coin, fit: BoxFit.contain),
                           ),
                           SizedBox(width: 15),
-                          TextWidgetCoin(coins: coins,),
+                          TextWidgetCoin(coins: coins),
                         ],
                       ),
                     ),
@@ -233,42 +247,129 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-//Container drop
-class WordsLength extends StatelessWidget {
+
+class WordsLength extends StatefulWidget {
+  final DataController dataController;
   final PictureCharade pictureCharade;
-  const WordsLength({super.key, required this.pictureCharade});
+
+  const WordsLength({
+    super.key,
+    required this.dataController,
+    required this.pictureCharade,
+  });
+
+  @override
+  State<WordsLength> createState() => _WordsLengthState();
+}
+
+class _WordsLengthState extends State<WordsLength> {
+  List<String?> placedLetters = [];
+  int coin = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    placedLetters = List.filled(widget.pictureCharade.word.length, null);
+  }
+
+  void checkResult() {
+    String collectedWord = placedLetters.join("");
+    if (collectedWord == widget.pictureCharade.word) {
+      setState(() {
+        coin += 100;
+      });
+      debugPrint("To'g'ri ");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(widget.pictureCharade.word.length, (index) {
+              String letter = widget.pictureCharade.word[index];
 
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-      ),
-      width: 550,
-      height: 175,
-      child: Card(
-        color: Colors.blue.shade900,
-           child:Column(
-             children: [
-               ColoredBox(
-                 color: Colors.blue.shade500,
-                 child: SizedBox(
-                   width: 530,height: 50,
-                 ),
-               ),
-               Divider(height: 5,color:Colors.blueGrey.shade900,),
-               SizedBox(height: 4,),
-               ColoredBox(
-                 color: Colors.blue.shade500,
-                 child: SizedBox(
-                   width: 530,height: 100,
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: Column(
+                  children: [
+                    ///tepada
+                    DragTarget<String>(
+                      onAcceptWithDetails: (receivedLetter) {
+                        setState(() {
+                          placedLetters[index] = receivedLetter as String?;
+                        });
+                        checkResult();
+                      },
+                      builder: (context, candidateData, rejectedData) {
+                        return Card(
+                          color: Colors.blue,
+                          elevation: 2,
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
 
-                 ),
-               )
-             ],
-           ),
-      ),
+                            child: Center(
+                              child:
+                                  placedLetters[index] != null
+                                      ? Text(
+                                        placedLetters[index]!,
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                      : Text(""),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    //pastda
+                    Draggable<String>(
+                      data: letter,
+                      feedback: Material(
+                        color: Colors.transparent,
+                        child: Card(
+                          color: Colors.blue,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              letter,
+                              style: TextStyle(
+                                fontSize: 24,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: Card(
+                        color: Colors.grey.shade300,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            letter,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
 }

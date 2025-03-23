@@ -58,11 +58,7 @@ class PictureCharade {
 
   @override
   String toString() {
-    return 'PictureCharade{' +
-        ' left: $left,' +
-        ' right: $right,' +
-        ' description: $description,' +
-        ' word: $word,' +
+    return 'PictureCharade{' ' left: $left,' ' right: $right,' ' description: $description,' ' word: $word,' +
         ' letters: $letters,' +
         ' imageUrl: $imageUrl,' +
         ' leftLetter: $leftLetter,' +
@@ -103,17 +99,17 @@ class PictureCharade {
 
   Map<String, dynamic> toMap() {
     return {
-      'left': this.left,
-      'right': this.right,
-      'description': this.description,
-      'word': this.word,
-      'letters': this.letters,
-      'imageUrl': this.imageUrl,
-      'leftLetter': this.leftLetter,
-      'rightLetter': this.rightLetter,
-      'middleLetter': this.middleLetter,
-      'level': this.level,
-      'coin': this.coin,
+      'left': left,
+      'right': right,
+      'description': description,
+      'word': word,
+      'letters': letters,
+      'imageUrl': imageUrl,
+      'leftLetter': leftLetter,
+      'rightLetter': rightLetter,
+      'middleLetter': middleLetter,
+      'level': level,
+      'coin': coin,
     };
   }
   factory PictureCharade.fromMap(Map<String, dynamic> map) {
@@ -172,11 +168,7 @@ class ImageCard {
 
   @override
   String toString() {
-    return 'ImageCard{' +
-        ' imageUrl: $imageUrl,' +
-        ' color: $color,' +
-        ' length: $length,' +
-        ' fill: $fill,' +
+    return 'ImageCard{' ' imageUrl: $imageUrl,' ' color: $color,' ' length: $length,' ' fill: $fill,' +
         ' name: $name,' +
         '}';
   }
@@ -199,16 +191,16 @@ class ImageCard {
 
   Map<String, dynamic> toMap() {
     return {
-      'imageUrl': this.imageUrl,
-      'color': this.color,
-      'length': this.length,
-      'fill': this.fill,
-      'name': this.name,
+      'imageUrl': imageUrl,
+      'color': color,
+      'length': length,
+      'fill': fill,
+      'name': name,
     };
   }factory ImageCard.fromMap(Map<String, dynamic> map) {
     return ImageCard(
       imageUrl: map['imageUrl'] as String,
-      color: int.parse("0xFF" + (map['color'] as String)), // ✅ HEX to int
+      color: int.parse("0xFF${map['color'] as String}"), // ✅ HEX to int
       length: map['length'] as int,
       fill: map['fill'] as int,
       name: map['name'] as String,
