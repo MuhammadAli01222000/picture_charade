@@ -75,72 +75,79 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     correct ? coinCount += 100 : coinCount;
     final DataController dataController = DataController();
-
+final controller =ScrollController();
     return Scaffold(
       appBar: _buildAppBar(level: level, coins: coinCount),
       backgroundColor: AppColors.white,
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(backround),
-            fit: BoxFit.fill,
+      body: SingleChildScrollView(
+        controller: controller,
+        scrollDirection: Axis.vertical,
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(backround),
+              fit: BoxFit.fill,
+            ),
           ),
-        ),
-        child: FutureBuilder<void>(
-          future: dataController.initialize(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
+          child: FutureBuilder<void>(
+            future: dataController.initialize(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-            return Column(
-              children: [
-                _light_button(),
-                SizedBox(height: 10),
-                soundOf(),
-                SizedBox(height: 20),
+              return Column(
+                children: [
+                  _light_button(),
+                  SizedBox(height: 10),
+                  soundOf(),
+                  SizedBox(height: 10),
+        ///img uchun
+                  SizedBox(
+                    height: 270,
+                    width: 260,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: 1,
+                      itemBuilder: (context, index) {
+                        return Expanded(
+                          child: MyImg(
+                            leftImg: dataController.list[index].left.imageUrl,
+                            rightImg: dataController.list[index].right.imageUrl,
+                            countWords: dataController.list[index].right.length,
+                            countWordsLeft:
+                                dataController.list[index].left.length,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
 
-                SizedBox(
-                  height: 280,
-                  width: 260,
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: 1,
-                    itemBuilder: (context, index) {
-                      return Expanded(
-                        child: MyImg(
-                          leftImg: dataController.list[index].left.imageUrl,
-                          rightImg: dataController.list[index].right.imageUrl,
-                          countWords: dataController.list[index].right.length,
-                          countWordsLeft:
-                              dataController.list[index].left.length,
-                        ),
-                      );
-                    },
+                  SizedBox(height: 20),
+                  Draggable(
+                    feedback: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Text(""),
+                    ),
+                    child: Container(
+                      width: 300,height: 145,
+                      child: WordsLength(
+                        pictureCharade: dataController.list.first,
+                        dataController: dataController,
+                      ),
+                    ),
                   ),
-                ),
-
-                SizedBox(height: 20),
-                Draggable(
-                  feedback: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Text("!!!!!!!11"),
-                  ),
-                  child: WordsLength(
-                    pictureCharade: dataController.list.first,
-                    dataController: dataController,
-                  ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  //icon button sound of
+ ///icon button sound of
   Align soundOf() {
     return Align(
       alignment: Alignment(0.8, 0.8),
@@ -281,95 +288,95 @@ class _WordsLengthState extends State<WordsLength> {
       debugPrint("To'g'ri ");
     }
   }
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(widget.pictureCharade.word.length, (index) {
-              String letter = widget.pictureCharade.word[index];
+    return Card(
+      color: Colors.blue.shade900,
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(widget.pictureCharade.word.length, (index) {
+            String letter = widget.pictureCharade.word[index];
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Column(
-                  children: [
-                    ///tepada
-                    DragTarget<String>(
-                      onAcceptWithDetails: (receivedLetter) {
-                        setState(() {
-                          placedLetters[index] = receivedLetter as String?;
-                        });
-                        checkResult();
-                      },
-                      builder: (context, candidateData, rejectedData) {
-                        return Card(
-                          color: Colors.blue,
-                          elevation: 2,
-                          child: SizedBox(
-                            width: 50,
-                            height: 50,
-
-                            child: Center(
-                              child:
-                                  placedLetters[index] != null
-                                      ? Text(
-                                        placedLetters[index]!,
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                      : Text(""),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    //pastda
-                    Draggable<String>(
-                      data: letter,
-                      feedback: Material(
-                        color: Colors.transparent,
-                        child: Card(
-                          color: Colors.blue,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              letter,
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DragTarget<String>(
+                    onAcceptWithDetails: (receivedLetter) {
+                      setState(() {
+                        placedLetters[index] = receivedLetter as String;
+                      });
+                      checkResult();
+                    },
+                    builder: (context, candidateData, rejectedData) {
+                      return Card(
+                        color: Colors.white,
+                        elevation: 2,
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: Center(
+                            child: placedLetters[index] != null
+                                ? Text(
+                              placedLetters[index]!,
                               style: TextStyle(
                                 fontSize: 24,
-                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ),
+                            )
+                                : Text(""),
                           ),
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 5),
+
+                  Draggable<String>(
+                    data: letter,
+                    feedback: Material(
+                      elevation: 5,
+                      shadowColor: Colors.black45,
+                      color: Colors.transparent,
                       child: Card(
-                        color: Colors.grey.shade300,
+                        color: Colors.blue,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             letter,
                             style: TextStyle(
                               fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              );
-            }),
-          ),
+                    child: Card(
+                      color: Colors.grey.shade300,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          letter,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ),
-      ],
+      ),
     );
   }
+
 }
